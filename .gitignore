@@ -1,0 +1,55 @@
+﻿# Environment
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+dist/
+build/
+coverage/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# AI private data
+ai/data/raw/*
+!ai/data/raw/.gitkeep
+ai/data/processed/*
+!ai/data/processed/.gitkeep
+ai/data/external/*
+!ai/data/external/.gitkeep
+
+# AI artifacts
+ai/artifacts/*
+!ai/artifacts/.gitkeep
+ai/experiments/*
+!ai/experiments/.gitkeep
+
+# Model artifacts
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.joblib
+*.pkl
+
+wandb/
+mlruns/
