@@ -29,6 +29,7 @@ Thumbs.db
 logs/
 
 # AI private data
+ai/data/raw/
 ai/data/raw/*
 !ai/data/raw/.gitkeep
 ai/data/processed/*
