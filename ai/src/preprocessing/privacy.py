@@ -27,15 +27,25 @@ def redact_pii(text: str) -> str:
 # "cheat" by detecting the source label instead of genuine risk signal
 # (see Phase 3 discussion on label leakage). Matched case-insensitively.
 SOURCE_LEAKAGE_PATTERNS = [
+    # Exact source subreddits + common misspellings/variants (found via
+    # Phase 4 EDA — "r/tenagers" was a real leak caught by manual review)
+    re.compile(r"\br/\s*suicide\s*watch\b", re.IGNORECASE),
     re.compile(r"\br/\s*suicidewatch\b", re.IGNORECASE),
-    re.compile(r"\br/\s*depression\b", re.IGNORECASE),
-    re.compile(r"\br/\s*teenagers\b", re.IGNORECASE),
+    re.compile(r"\br/\s*depress(ion|ed)?\b", re.IGNORECASE),
+    re.compile(r"\br/\s*te+nagers?\b", re.IGNORECASE),  # catches r/teenagers, r/tenagers
     re.compile(r"\bsuicidewatch\b", re.IGNORECASE),
     re.compile(r"\bcross[- ]?post(ed|ing)?\b", re.IGNORECASE),
     re.compile(r"\b(depression|suicide|suicidewatch)\s+sub(reddit)?\b", re.IGNORECASE),
     re.compile(r"\bon\s+this\s+sub(reddit)?\b", re.IGNORECASE),
     re.compile(r"\bthis\s+sub(reddit)?\b", re.IGNORECASE),
 ]
+
+# NOTE (Phase 4 EDA decision): we deliberately do NOT strip generic
+# subreddit mentions like r/relationships, r/ADHD, r/offmychest, etc.
+# Manual review showed these are real content people are disclosing, not
+# label leakage — they aren't the subreddits this dataset's labels are
+# derived from, so a model can't "cheat" using them. Stripping all "r/x"
+# mentions would remove genuine signal for no safety benefit.
 
 
 def strip_source_leakage(text: str) -> str:
