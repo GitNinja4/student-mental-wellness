@@ -64,6 +64,28 @@ def remove_boilerplate(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def remove_filler_spam(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Some subreddits (r/teenagers in particular) auto-moderate a minimum
+    post length, so users pad short posts with the literal word "filler"
+    repeated to pass the character check. This is padding, not content —
+    found via Phase 4 EDA (see inspect_filler.py). We drop rows where more
+    than half the words are literally "filler".
+    """
+    def filler_ratio(text: str) -> float:
+        words = text.lower().split()
+        if not words:
+            return 0
+        return sum(1 for w in words if w == "filler") / len(words)
+
+    before = len(df)
+    df = df[df["text"].apply(filler_ratio) <= 0.5]
+    after = len(df)
+    print(f"Filler-spam removal: dropped {before - after} rows that were mostly "
+          f"literal 'filler' padding ({before} -> {after})")
+    return df
+
+
 def clean_and_filter_text(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df["text"] = df["text"].apply(minimal_clean)
@@ -111,6 +133,7 @@ def main():
     print(f"Loading raw data from {RAW_PATH}")
     df = load_and_validate(RAW_PATH)
     df = remove_boilerplate(df)
+    df = remove_filler_spam(df)
     df = clean_and_filter_text(df)
     df = deduplicate(df)
 

@@ -33,6 +33,8 @@ SOURCE_LEAKAGE_PATTERNS = [
     re.compile(r"\bsuicidewatch\b", re.IGNORECASE),
     re.compile(r"\bcross[- ]?post(ed|ing)?\b", re.IGNORECASE),
     re.compile(r"\b(depression|suicide|suicidewatch)\s+sub(reddit)?\b", re.IGNORECASE),
+    re.compile(r"\bon\s+this\s+sub(reddit)?\b", re.IGNORECASE),
+    re.compile(r"\bthis\s+sub(reddit)?\b", re.IGNORECASE),
 ]
 
 
