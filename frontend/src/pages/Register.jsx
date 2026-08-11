@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Register({ onLoginClick }) {
+function Register({ onLoginClick, onRegisterSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -17,11 +17,12 @@ function Register({ onLoginClick }) {
       return;
     }
 
-    console.log("Name:", fullName);
-    console.log("Email:", email);
-    console.log("Password:", password);
+  console.log("Name:", fullName);
+console.log("Email:", email);
+console.log("Password:", password);
 
-    // Backend registration will be connected here later.
+// Temporary: go to Check-in after registration
+onRegisterSuccess();
   };
 
   return (

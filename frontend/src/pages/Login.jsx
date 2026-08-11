@@ -1,20 +1,20 @@
 import { useState } from "react";
 
-function Login({ onRegisterClick }) {
+function Login({ onRegisterClick, onLoginSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    console.log("Email:", email);
-    console.log("Password:", password);
+  console.log("Email:", email);
+  console.log("Password:", password);
 
-    // Backend login will be connected here later.
-  };
-
+  // Temporary navigation
+  onLoginSuccess();
+};
   return (
     <div className="auth-page">
 

@@ -1,0 +1,406 @@
+* {
+  box-sizing: border-box;
+}
+
+.checkin-page {
+  min-height: 100vh;
+  background: #f8f7ff;
+  color: #202044;
+  font-family: Arial, sans-serif;
+}
+
+/* Header */
+
+.checkin-header {
+  height: 70px;
+  background: white;
+  border-bottom: 1px solid #eeeafa;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 50px;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #6246d9;
+}
+
+.logo span {
+  margin-left: 8px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  color: #55556f;
+  font-size: 14px;
+}
+
+.profile-circle {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: #e9e2ff;
+  color: #6246d9;
+  font-weight: bold;
+}
+
+/* Main */
+
+.checkin-container {
+  width: min(900px, 92%);
+  margin: 0 auto;
+  padding: 50px 0;
+}
+
+/* Title */
+
+.checkin-title {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.small-title {
+  color: #704fe6;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.checkin-title h1 {
+  font-size: 34px;
+  margin: 0 0 12px;
+}
+
+.checkin-title p {
+  color: #77778d;
+}
+
+/* Cards */
+
+.checkin-card {
+  background: white;
+  border: 1px solid #ebe8f7;
+  border-radius: 18px;
+
+  padding: 30px;
+  margin-bottom: 22px;
+
+  box-shadow: 0 8px 30px rgba(70, 50, 130, 0.06);
+}
+
+.checkin-card h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.card-description {
+  color: #85859b;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* Mood */
+
+.mood-options {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+
+.mood-option {
+  border: 1px solid #e7e3f4;
+  background: #faf9ff;
+
+  border-radius: 14px;
+  padding: 18px 10px;
+
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  color: #4e4e67;
+  transition: 0.2s;
+}
+
+.mood-option:hover {
+  border-color: #704fe6;
+  background: #f3efff;
+  transform: translateY(-3px);
+}
+
+.mood-emoji {
+  font-size: 32px;
+}
+
+/* Sliders */
+
+.slider-row {
+  margin-bottom: 25px;
+}
+
+.slider-info {
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.slider-info strong {
+  color: #704fe6;
+}
+
+.slider-row input {
+  width: 100%;
+  accent-color: #704fe6;
+  cursor: pointer;
+}
+
+/* Textarea */
+
+textarea {
+  width: 100%;
+  resize: vertical;
+
+  border: 1px solid #ded9ef;
+  border-radius: 12px;
+
+  padding: 15px;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+}
+
+textarea:focus {
+  border-color: #704fe6;
+  box-shadow: 0 0 0 3px #eee9ff;
+}
+
+/* Save */
+
+.save-section {
+  text-align: center;
+  padding: 10px 0 40px;
+}
+
+.save-button {
+  border: none;
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #6546d8,
+    #805ce5
+  );
+
+  color: white;
+
+  padding: 15px 45px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 8px 20px rgba(101, 70, 216, 0.25);
+
+  transition: 0.2s;
+}
+
+.save-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(101, 70, 216, 0.3);
+}
+
+.save-section p {
+  font-size: 12px;
+  color: #9292a6;
+  margin-top: 12px;
+}
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+  .checkin-header {
+    padding: 0 20px;
+  }
+
+  .header-right span {
+    display: none;
+  }
+
+  .checkin-container {
+    padding: 30px 0;
+  }
+
+  .checkin-title h1 {
+    font-size: 27px;
+  }
+
+  .mood-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .checkin-card {
+    padding: 20px;
+  }
+}
+
+/* =========================================
+   MOOD CARDS - PREMIUM UI
+========================================= */
+
+.mood-options {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.mood-card {
+  position: relative;
+  border: 1px solid #e8e3f5;
+  background: linear-gradient(145deg, #ffffff, #faf8ff);
+  border-radius: 18px;
+  padding: 26px 15px;
+  min-height: 130px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease;
+}
+
+/* Hover effect */
+
+.mood-card:hover {
+  transform: translateY(-6px);
+
+  border-color: #8b5cf6;
+
+  box-shadow:
+    0 12px 30px rgba(109, 76, 190, 0.15);
+}
+
+/* Emoji */
+
+.mood-card .emoji {
+  font-size: 42px;
+  margin-bottom: 14px;
+
+  transition:
+    transform 0.25s ease;
+}
+
+.mood-card:hover .emoji {
+  transform: scale(1.15);
+}
+
+/* Mood name */
+
+.mood-card span:last-child {
+  font-size: 16px;
+  font-weight: 600;
+  color: #37305c;
+}
+
+/* Selected mood */
+
+.mood-card.selected {
+  background: linear-gradient(
+    145deg,
+    #f1ebff,
+    #e8ddff
+  );
+
+  border: 2px solid #7651dc;
+
+  box-shadow:
+    0 12px 30px rgba(118, 81, 220, 0.22);
+
+  transform: translateY(-5px);
+}
+
+/* Selected emoji */
+
+.mood-card.selected .emoji {
+  transform: scale(1.2);
+}
+
+/* Selected check mark */
+
+.mood-card.selected::after {
+  content: "✓";
+
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 25px;
+  height: 25px;
+
+  border-radius: 50%;
+
+  background: #7651dc;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 900px) {
+  .mood-options {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .mood-options {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .mood-card {
+    min-height: 115px;
+    padding: 20px 10px;
+  }
+
+  .mood-card .emoji {
+    font-size: 34px;
+  }
+}
