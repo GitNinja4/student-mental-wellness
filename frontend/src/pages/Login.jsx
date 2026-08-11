@@ -1,7 +1,8 @@
 import { useState } from "react";
 
-function Login({ onRegisterClick }) {
-  const [showPassword, setShowPassword] = useState(false);
+function Login({ onRegisterClick, onLoginSuccess }) {
+  const [showPassword, setShowPassword] =
+    useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -9,15 +10,45 @@ function Login({ onRegisterClick }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log("Email:", email);
-    console.log("Password:", password);
+    // Get all registered users
+    const existingUsers =
+      JSON.parse(localStorage.getItem("users")) || [];
 
-    // Backend login will be connected here later.
+    // Find user by email
+    const user = existingUsers.find(
+      (user) =>
+        user.email.toLowerCase() ===
+        email.trim().toLowerCase()
+    );
+
+    // User has NOT registered
+    if (!user) {
+      alert(
+        "You haven't registered yet. Please create an account first."
+      );
+      return;
+    }
+
+    // User exists but password is wrong
+    if (user.password !== password) {
+      alert(
+        "Incorrect password. Please try again."
+      );
+      return;
+    }
+
+    // Login successful
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify(user)
+    );
+
+    // Open dashboard
+    onLoginSuccess(user);
   };
 
   return (
     <div className="auth-page">
-
       <div className="auth-card">
 
         {/* Logo */}
@@ -25,6 +56,7 @@ function Login({ onRegisterClick }) {
           <span>🧠</span>
         </div>
 
+        {/* Brand */}
         <div className="brand-name">
           Student Mental Wellness
         </div>
@@ -50,7 +82,9 @@ function Login({ onRegisterClick }) {
               id="login-email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
               placeholder="Enter your email"
               required
             />
@@ -68,9 +102,15 @@ function Login({ onRegisterClick }) {
 
               <input
                 id="login-password"
-                type={showPassword ? "text" : "password"}
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
                 placeholder="Enter your password"
                 required
               />
@@ -89,10 +129,12 @@ function Login({ onRegisterClick }) {
 
           </div>
 
+          {/* Forgot Password */}
           <div className="forgot-password">
             Forgot Password?
           </div>
 
+          {/* Login */}
           <button
             type="submit"
             className="auth-button"
@@ -123,7 +165,6 @@ function Login({ onRegisterClick }) {
         </p>
 
       </div>
-
     </div>
   );
 }
