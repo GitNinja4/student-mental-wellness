@@ -6,11 +6,14 @@ function Login({ onRegisterClick, onLoginSuccess }) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setIsLoading(true);
+
       const response = await fetch(
         "http://localhost:5000/api/auth/login",
         {
@@ -34,11 +37,18 @@ function Login({ onRegisterClick, onLoginSuccess }) {
 
       localStorage.setItem("token", data.token);
 
+      localStorage.setItem(
+        "mindtrack_user",
+        JSON.stringify(data.user)
+      );
+
       onLoginSuccess(data.user);
 
     } catch (error) {
       console.error("Login error:", error);
       alert("Unable to connect to the server.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -133,8 +143,11 @@ function Login({ onRegisterClick, onLoginSuccess }) {
           <button
             type="submit"
             className="auth-button"
+            disabled={isLoading}
           >
-            Login
+            {isLoading
+              ? "Logging in..."
+              : "Login"}
           </button>
 
         </form>

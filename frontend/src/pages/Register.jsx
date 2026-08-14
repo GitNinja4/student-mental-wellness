@@ -9,17 +9,19 @@ function Register({ onLoginClick, onRegisterSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check password confirmation
     if (password !== confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
 
     try {
+      setIsLoading(true);
+
       const response = await fetch(
         "http://localhost:5000/api/auth/register",
         {
@@ -42,15 +44,21 @@ function Register({ onLoginClick, onRegisterSuccess }) {
         return;
       }
 
-  
 
       alert("Account created successfully. Please login.");
+
+      setFullName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
 
       onLoginClick();
 
     } catch (error) {
       console.error("Registration error:", error);
       alert("Unable to connect to the server.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -196,8 +204,11 @@ function Register({ onLoginClick, onRegisterSuccess }) {
           <button
             type="submit"
             className="auth-button"
+            disabled={isLoading}
           >
-            Create Account
+            {isLoading
+              ? "Creating Account..."
+              : "Create Account"}
           </button>
 
         </form>

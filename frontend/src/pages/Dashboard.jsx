@@ -40,13 +40,6 @@ import {
 import "./Dashboard.css";
 
 
-/* =========================================================
-   DEFAULT FRONTEND DATA
-
-   This is only temporary frontend data.
-   Later your backend can replace this.
-========================================================= */
-
 const defaultCheckins = [
   {
     id: 1,
@@ -114,9 +107,6 @@ const defaultCheckins = [
 ];
 
 
-/* =========================================================
-   HELPERS
-========================================================= */
 
 function getStoredData(key, fallback) {
   try {
@@ -203,58 +193,52 @@ function getZone(score) {
 }
 
 
-/* =========================================================
-   DASHBOARD
-========================================================= */
 
-function Dashboard({ user }) {
+function Dashboard({ user, onLogout }) {
 
-  /* -----------------------------
-     USER
-  ----------------------------- */
 
-  const initialUser = {
-    name:
-      user?.name ||
-      getStoredData("mindtrack_user", { name: "Akshita" }).name ||
-      "Student",
+
+  const [profile, setProfile] = useState({
+    name: user?.name || "Student",
     email: user?.email || "",
-  };
-
-  const [profile, setProfile] = useState(initialUser);
+  });
 
 
-  /* -----------------------------
-     CHECK-INS
-  ----------------------------- */
+  useEffect(() => {
+    setProfile({
+      name: user?.name || "Student",
+      email: user?.email || "",
+    });
+  }, [user]);
+
+
+
 
   const [checkins, setCheckins] = useState(() =>
     getStoredData("mindtrack_checkins", defaultCheckins)
   );
 
 
-  /* -----------------------------
-     UI STATES
-  ----------------------------- */
 
   const [showCheckin, setShowCheckin] = useState(false);
 
   const [showProfile, setShowProfile] = useState(false);
 
-  const [showNotifications, setShowNotifications] = useState(false);
+  const [showNotifications, setShowNotifications] =
+    useState(false);
 
   const [showSearch, setShowSearch] = useState(false);
 
-  const [activeNav, setActiveNav] = useState("Dashboard");
+  const [activeNav, setActiveNav] =
+    useState("Dashboard");
 
   const [message, setMessage] = useState("");
 
 
-  /* -----------------------------
-     FORM
-  ----------------------------- */
 
-  const latestCheckin = checkins[0] || defaultCheckins[0];
+  const latestCheckin =
+    checkins[0] || defaultCheckins[0];
+
 
   const [form, setForm] = useState({
     mood: latestCheckin.mood,
@@ -265,9 +249,21 @@ function Dashboard({ user }) {
   });
 
 
-  /* =========================================================
-     SAVE TO LOCAL STORAGE
-  ========================================================= */
+
+  const openCheckin = () => {
+    setForm({
+      mood: latestCheckin.mood,
+      stress: latestCheckin.stress,
+      sleep: latestCheckin.sleep,
+      energy: latestCheckin.energy,
+      anxiety: latestCheckin.anxiety,
+    });
+
+    setShowCheckin(true);
+  };
+
+
+
 
   useEffect(() => {
     localStorage.setItem(
@@ -277,17 +273,6 @@ function Dashboard({ user }) {
   }, [checkins]);
 
 
-  useEffect(() => {
-    localStorage.setItem(
-      "mindtrack_user",
-      JSON.stringify(profile)
-    );
-  }, [profile]);
-
-
-  /* =========================================================
-     CURRENT DATA
-  ========================================================= */
 
   const wellnessScore = useMemo(() => {
 
@@ -313,9 +298,6 @@ function Dashboard({ user }) {
   const zone = getZone(wellnessScore);
 
 
-  /* =========================================================
-     CHART DATA
-  ========================================================= */
 
   const moodData = useMemo(() => {
 
@@ -340,9 +322,18 @@ function Dashboard({ user }) {
   }, [checkins]);
 
 
-  /* =========================================================
-     SAVE CHECK-IN
-  ========================================================= */
+
+  const showMessage = (text, duration = 3000) => {
+
+    setMessage(text);
+
+    setTimeout(() => {
+      setMessage("");
+    }, duration);
+
+  };
+
+
 
   const handleCheckinSubmit = (e) => {
 
@@ -376,108 +367,102 @@ function Dashboard({ user }) {
 
     setShowCheckin(false);
 
-    setMessage("Your check-in has been saved.");
-
-    setTimeout(() => {
-      setMessage("");
-    }, 3000);
+    showMessage(
+      "Your check-in has been saved."
+    );
 
   };
 
 
-  /* =========================================================
-     PROFILE
-  ========================================================= */
 
   const handleProfileSave = (e) => {
 
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
+    const formData =
+      new FormData(e.currentTarget);
 
     const name =
-      formData.get("profileName")?.toString().trim() ||
-      "Student";
+      formData
+        .get("profileName")
+        ?.toString()
+        .trim() || "Student";
 
-    setProfile({
-      ...profile,
+
+    setProfile((previous) => ({
+      ...previous,
       name,
-    });
+    }));
+
 
     setShowProfile(false);
 
-    setMessage("Profile updated successfully.");
+    showMessage(
+      "Profile updated successfully."
+    );
 
-    setTimeout(() => {
-      setMessage("");
-    }, 3000);
   };
 
-
-  /* =========================================================
-     NAVIGATION
-  ========================================================= */
 
   const handleNavigation = (item) => {
 
     setActiveNav(item);
 
     if (item === "Check-in") {
-      setShowCheckin(true);
+      openCheckin();
       return;
     }
+
 
     if (item === "Profile") {
       setShowProfile(true);
       return;
     }
 
+
     if (item === "Dashboard") {
       return;
     }
 
-    setMessage(`${item} section is ready to be connected.`);
 
-    setTimeout(() => {
-      setMessage("");
-    }, 2500);
+    showMessage(
+      `${item} section is ready to be connected.`,
+      2500
+    );
+
   };
 
 
-  /* =========================================================
-     LOGOUT
-  ========================================================= */
+
 
   const handleLogout = () => {
 
-    localStorage.removeItem("mindtrack_user");
+    localStorage.removeItem("token");
 
-    setMessage("You have been logged out.");
+ 
 
-    setTimeout(() => {
+    if (onLogout) {
+      onLogout();
+    } else {
+
+
       window.location.reload();
-    }, 1000);
+    }
+
   };
 
-
-  /* =========================================================
-     AVATAR
-  ========================================================= */
 
   const avatarLetter =
     profile.name?.charAt(0)?.toUpperCase() || "U";
 
 
-  /* =========================================================
-     RENDER
-  ========================================================= */
-
   return (
     <div className="dashboard">
 
-      {/* =====================================================
+
+      {/* ===================================================
           SIDEBAR
-      ===================================================== */}
+      =================================================== */}
 
       <aside className="sidebar">
 
@@ -488,8 +473,15 @@ function Dashboard({ user }) {
           </div>
 
           <div className="logo-text">
-            <strong>MindTrack</strong>
-            <span>Student Wellness</span>
+
+            <strong>
+              MindTrack
+            </strong>
+
+            <span>
+              Student Wellness
+            </span>
+
           </div>
 
         </div>
@@ -500,31 +492,45 @@ function Dashboard({ user }) {
           {[
             {
               name: "Dashboard",
-              icon: <LayoutDashboard size={20} />,
+              icon: (
+                <LayoutDashboard size={20} />
+              ),
             },
             {
               name: "Check-in",
-              icon: <Smile size={20} />,
+              icon: (
+                <Smile size={20} />
+              ),
             },
             {
               name: "History",
-              icon: <History size={20} />,
+              icon: (
+                <History size={20} />
+              ),
             },
             {
               name: "Reports",
-              icon: <BarChart3 size={20} />,
+              icon: (
+                <BarChart3 size={20} />
+              ),
             },
             {
               name: "AI Assistant",
-              icon: <Bot size={20} />,
+              icon: (
+                <Bot size={20} />
+              ),
             },
             {
               name: "Resources",
-              icon: <BookOpen size={20} />,
+              icon: (
+                <BookOpen size={20} />
+              ),
             },
             {
               name: "Bookmarks",
-              icon: <Bookmark size={20} />,
+              icon: (
+                <Bookmark size={20} />
+              ),
             },
           ].map((item) => (
 
@@ -562,7 +568,10 @@ function Dashboard({ user }) {
             }
           >
             <User size={20} />
-            <span>Profile</span>
+
+            <span>
+              Profile
+            </span>
           </button>
 
 
@@ -573,7 +582,10 @@ function Dashboard({ user }) {
             }
           >
             <Settings size={20} />
-            <span>Settings</span>
+
+            <span>
+              Settings
+            </span>
           </button>
 
 
@@ -582,7 +594,10 @@ function Dashboard({ user }) {
             onClick={handleLogout}
           >
             <LogOut size={20} />
-            <span>Logout</span>
+
+            <span>
+              Logout
+            </span>
           </button>
 
         </div>
@@ -590,16 +605,16 @@ function Dashboard({ user }) {
       </aside>
 
 
-      {/* =====================================================
+      {/* ===================================================
           MAIN
-      ===================================================== */}
+      =================================================== */}
 
       <main className="dashboard-main">
 
 
-        {/* ===================================================
+        {/* =================================================
             HEADER
-        =================================================== */}
+        ================================================= */}
 
         <header className="dashboard-header">
 
@@ -648,9 +663,13 @@ function Dashboard({ user }) {
                     !showNotifications
                   )
                 }
+                aria-label="Notifications"
               >
+
                 <Bell size={20} />
+
                 <span className="notification-dot"></span>
+
               </button>
 
 
@@ -670,7 +689,7 @@ function Dashboard({ user }) {
                   <button
                     onClick={() => {
                       setShowNotifications(false);
-                      setShowCheckin(true);
+                      openCheckin();
                     }}
                   >
                     Complete check-in
@@ -721,9 +740,9 @@ function Dashboard({ user }) {
         </header>
 
 
-        {/* ===================================================
-            SEARCH BAR
-        =================================================== */}
+        {/* =================================================
+            SEARCH
+        ================================================= */}
 
         {showSearch && (
 
@@ -740,6 +759,7 @@ function Dashboard({ user }) {
               onClick={() =>
                 setShowSearch(false)
               }
+              aria-label="Close search"
             >
               <X size={18} />
             </button>
@@ -749,23 +769,28 @@ function Dashboard({ user }) {
         )}
 
 
-        {/* ===================================================
+        {/* =================================================
             SUCCESS MESSAGE
-        =================================================== */}
+        ================================================= */}
 
         {message && (
 
           <div className="success-message">
-            <span>✓</span>
+
+            <span>
+              ✓
+            </span>
+
             {message}
+
           </div>
 
         )}
 
 
-        {/* ===================================================
+        {/* =================================================
             STAT CARDS
-        =================================================== */}
+        ================================================= */}
 
         <section className="stats-grid">
 
@@ -787,7 +812,9 @@ function Dashboard({ user }) {
             </div>
 
             <div className="stat-value">
-              {getMoodLabel(latestCheckin.mood)}
+              {getMoodLabel(
+                latestCheckin.mood
+              )}
             </div>
 
             <div className="stat-bottom">
@@ -955,9 +982,9 @@ function Dashboard({ user }) {
         </section>
 
 
-        {/* ===================================================
+        {/* =================================================
             MIDDLE CARDS
-        =================================================== */}
+        ================================================= */}
 
         <section className="main-grid">
 
@@ -1111,9 +1138,7 @@ function Dashboard({ user }) {
 
 
             <button
-              onClick={() =>
-                setShowCheckin(true)
-              }
+              onClick={openCheckin}
             >
 
               <div className="action-icon purple-bg">
@@ -1190,9 +1215,9 @@ function Dashboard({ user }) {
         </section>
 
 
-        {/* ===================================================
+        {/* =================================================
             MOOD TREND
-        =================================================== */}
+        ================================================= */}
 
         <section className="dashboard-card mood-trend">
 
@@ -1247,7 +1272,6 @@ function Dashboard({ user }) {
                   stroke="#eeeef5"
                 />
 
-
                 <XAxis
                   dataKey="day"
                   axisLine={false}
@@ -1258,7 +1282,6 @@ function Dashboard({ user }) {
                   }}
                 />
 
-
                 <YAxis
                   domain={[0, 10]}
                   axisLine={false}
@@ -1268,7 +1291,6 @@ function Dashboard({ user }) {
                     fontSize: 12,
                   }}
                 />
-
 
                 <Tooltip
                   contentStyle={{
@@ -1282,7 +1304,6 @@ function Dashboard({ user }) {
                     "Mood",
                   ]}
                 />
-
 
                 <Line
                   type="monotone"
@@ -1309,9 +1330,9 @@ function Dashboard({ user }) {
         </section>
 
 
-        {/* ===================================================
+        {/* =================================================
             RECENT CHECK-INS
-        =================================================== */}
+        ================================================= */}
 
         <section className="dashboard-card recent-checkins">
 
@@ -1422,11 +1443,13 @@ function Dashboard({ user }) {
 
               </div>
 
+
               <button
                 className="close-button"
                 onClick={() =>
                   setShowCheckin(false)
                 }
+                aria-label="Close check-in"
               >
                 <X size={20} />
               </button>
@@ -1443,6 +1466,7 @@ function Dashboard({ user }) {
               {/* MOOD */}
 
               <label>
+
                 <div className="range-label">
 
                   <span>
@@ -1474,6 +1498,7 @@ function Dashboard({ user }) {
               {/* STRESS */}
 
               <label>
+
                 <div className="range-label">
 
                   <span>
@@ -1603,8 +1628,11 @@ function Dashboard({ user }) {
                 type="submit"
                 className="save-button"
               >
+
                 <Save size={18} />
+
                 Save Check-in
+
               </button>
 
             </form>
@@ -1654,11 +1682,13 @@ function Dashboard({ user }) {
 
               </div>
 
+
               <button
                 className="close-button"
                 onClick={() =>
                   setShowProfile(false)
                 }
+                aria-label="Close profile"
               >
                 <X size={20} />
               </button>
@@ -1677,6 +1707,7 @@ function Dashboard({ user }) {
 
 
               <label>
+
                 Full Name
 
                 <input
@@ -1690,12 +1721,14 @@ function Dashboard({ user }) {
 
 
               <label>
+
                 Email
 
                 <input
                   value={profile.email}
                   disabled
                   placeholder="Email"
+                  readOnly
                 />
 
               </label>
@@ -1705,8 +1738,11 @@ function Dashboard({ user }) {
                 type="submit"
                 className="save-button"
               >
+
                 <Save size={18} />
+
                 Save Profile
+
               </button>
 
             </form>

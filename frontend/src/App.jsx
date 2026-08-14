@@ -13,64 +13,37 @@ function App() {
 
   const [currentUser, setCurrentUser] = useState(null);
 
-  const [checkingAuth, setCheckingAuth] = useState(true);
+ 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setIsLoggedIn(false);
+      return;
+    }
 
   
-  useEffect(() => {
-    const verifyToken = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        setIsLoggedIn(false);
-        setCurrentUser(null);
-        setCheckingAuth(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/auth/verify",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+    try {
+      const storedUser =
+        JSON.parse(
+          localStorage.getItem("mindtrack_user")
         );
 
-        const data = await response.json();
+      setCurrentUser(storedUser || null);
+      setIsLoggedIn(true);
 
-        if (!response.ok) {
-          localStorage.removeItem("token");
+    } catch (error) {
+      console.error(
+        "Unable to restore user session:",
+        error
+      );
 
-          setIsLoggedIn(false);
-          setCurrentUser(null);
-          setCheckingAuth(false);
+      setCurrentUser(null);
+      setIsLoggedIn(true);
+    }
 
-          return;
-        }
-
-       
-        setCurrentUser(data.user);
-        setIsLoggedIn(true);
-
-      } catch (error) {
-        console.error(
-          "Authentication verification error:",
-          error
-        );
-
-       
-        setIsLoggedIn(false);
-        setCurrentUser(null);
-
-      } finally {
-        setCheckingAuth(false);
-      }
-    };
-
-    verifyToken();
   }, []);
+
 
   const handleLoginSuccess = (user) => {
     setCurrentUser(user);
@@ -78,29 +51,20 @@ function App() {
     setShowRegister(false);
   };
 
+
   const handleRegisterSuccess = () => {
-   
-    setCurrentUser(null);
-    setIsLoggedIn(false);
     setShowRegister(false);
   };
 
-  
   const handleLogout = () => {
-  
     localStorage.removeItem("token");
+    localStorage.removeItem("mindtrack_user");
 
     setCurrentUser(null);
     setIsLoggedIn(false);
     setShowRegister(false);
   };
 
- 
-  if (checkingAuth) {
-    return null;
-  }
-
-  
   if (isLoggedIn) {
     return (
       <Dashboard
@@ -110,18 +74,26 @@ function App() {
     );
   }
 
-  
+
   return (
     <>
       {showRegister ? (
         <Register
-          onLoginClick={() => setShowRegister(false)}
-          onRegisterSuccess={handleRegisterSuccess}
+          onLoginClick={() =>
+            setShowRegister(false)
+          }
+          onRegisterSuccess={
+            handleRegisterSuccess
+          }
         />
       ) : (
         <Login
-          onRegisterClick={() => setShowRegister(true)}
-          onLoginSuccess={handleLoginSuccess}
+          onRegisterClick={() =>
+            setShowRegister(true)
+          }
+          onLoginSuccess={
+            handleLoginSuccess
+          }
         />
       )}
     </>
