@@ -10,7 +10,7 @@ function Register({ onLoginClick, onRegisterSuccess }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Check password confirmation
@@ -19,47 +19,39 @@ function Register({ onLoginClick, onRegisterSuccess }) {
       return;
     }
 
-    // Get all previously registered users
-    const existingUsers =
-      JSON.parse(localStorage.getItem("users")) || [];
-
-    // Check if this email already exists
-    const userAlreadyExists = existingUsers.some(
-      (user) =>
-        user.email.toLowerCase() === email.toLowerCase()
-    );
-
-    if (userAlreadyExists) {
-      alert(
-        "An account with this email already exists. Please login."
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: fullName.trim(),
+            email: email.trim().toLowerCase(),
+            password: password,
+          }),
+        }
       );
-      return;
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Registration failed.");
+        return;
+      }
+
+  
+
+      alert("Account created successfully. Please login.");
+
+      onLoginClick();
+
+    } catch (error) {
+      console.error("Registration error:", error);
+      alert("Unable to connect to the server.");
     }
-
-    // Create new user
-    const newUser = {
-      name: fullName.trim(),
-      email: email.trim().toLowerCase(),
-      password: password,
-    };
-
-    // Add new user to users list
-    existingUsers.push(newUser);
-
-    // Save all users
-    localStorage.setItem(
-      "users",
-      JSON.stringify(existingUsers)
-    );
-
-    // Automatically log in the newly registered user
-    localStorage.setItem(
-      "currentUser",
-      JSON.stringify(newUser)
-    );
-
-    // Open dashboard directly
-    onRegisterSuccess(newUser);
   };
 
   return (
