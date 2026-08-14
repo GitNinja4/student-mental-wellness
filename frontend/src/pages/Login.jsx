@@ -6,45 +6,50 @@ function Login({ onRegisterClick, onLoginSuccess }) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Get all registered users
-    const existingUsers =
-      JSON.parse(localStorage.getItem("users")) || [];
+    try {
+      setIsLoading(true);
 
-    // Find user by email
-    const user = existingUsers.find(
-      (user) =>
-        user.email.toLowerCase() ===
-        email.trim().toLowerCase()
-    );
-
-    // User has NOT registered
-    if (!user) {
-      alert(
-        "You haven't registered yet. Please create an account first."
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email.trim().toLowerCase(),
+            password: password,
+          }),
+        }
       );
-      return;
-    }
 
-    // User exists but password is wrong
-    if (user.password !== password) {
-      alert(
-        "Incorrect password. Please try again."
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Login failed.");
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+
+      localStorage.setItem(
+        "mindtrack_user",
+        JSON.stringify(data.user)
       );
-      return;
+
+      onLoginSuccess(data.user);
+
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Unable to connect to the server.");
+    } finally {
+      setIsLoading(false);
     }
-
-    // Login successful
-    localStorage.setItem(
-      "currentUser",
-      JSON.stringify(user)
-    );
-
-    // Open dashboard
-    onLoginSuccess(user);
   };
 
   return (
@@ -138,8 +143,11 @@ function Login({ onRegisterClick, onLoginSuccess }) {
           <button
             type="submit"
             className="auth-button"
+            disabled={isLoading}
           >
-            Login
+            {isLoading
+              ? "Logging in..."
+              : "Login"}
           </button>
 
         </form>
