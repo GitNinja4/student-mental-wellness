@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import authRoutes from "./modules/auth/auth_routes.js";
 
 const app = express();
 
@@ -12,5 +13,7 @@ app.get("/", (req, res) => {
         message: "Student Mental Wellness Tracker API is running"
     });
 });
+
+app.use("/api/auth", authRoutes);
 
 export default app;

@@ -7,9 +7,9 @@
     "test": "tests"
   },
   "scripts": {
-    "server": "nodemon src/server.js",
-    "start": "node src/server.js"
-  },
+  "server": "nodemon --exec tsx src/server.js",
+  "start": "tsx src/server.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.14",
-    "prisma": "^7.9.1"
+    "prisma": "^7.9.1",
+    "tsx": "^4.23.12"
   }
 }
