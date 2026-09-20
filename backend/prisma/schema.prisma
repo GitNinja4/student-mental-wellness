@@ -17,4 +17,21 @@ model User {
   role      String   @default("STUDENT")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  checkIns  CheckIn[]
+}
+
+model CheckIn {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  mood      Int
+  stress    Int
+  sleep     Int
+  energy    Int
+  anxiety   Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
